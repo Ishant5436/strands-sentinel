@@ -75,7 +75,7 @@ Strands Sentinel integrates five deterministic tools behind an intelligent agent
 
 #### Part 2: Architecture & Decision Gating (1:00 - 2:00)
 - **Visual:** Show Mermaid diagram from README and code in `src/strands_sentinel/intervention.py`.
-- **Narrator:** "Strands Sentinel combines five deterministic tools with a Strands Agent. Most importantly, it implements an `InterventionHandler`. Routine checks pass silently in the background without disturbing the engineer. When a critical invariant violation or secret leak occurs, the agent pauses and surfaces a confirmation prompt with an exact remediation patch."
+- **Narrator:** "Strands Sentinel combines five deterministic tools with a Strands Agent. Most importantly, it implements an `InterventionHandler`. Routine checks pass silently in the background without disturbing the engineer. When a critical invariant violation or secret leak occurs, the agent pauses and surfaces a confirmation prompt with structured remediation guidance."
 
 #### Part 3: Live Terminal Demonstration (2:00 - 4:00)
 - **Visual:** Terminal execution.
