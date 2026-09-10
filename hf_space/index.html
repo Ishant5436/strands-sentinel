@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strands Sentinel - Autonomous Systems & AST Safety Auditor</title>
+    <style>
+        :root {
+            --bg: #0f141c;
+            --surface: #182232;
+            --surface-border: #27374d;
+            --text-primary: #e6edf3;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        @media(min-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: #0b0f17;
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            padding: 12px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #1e293b;
+            color: var(--text-primary);
+            border: 1px solid var(--surface-border);
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        button:hover {
+            background: #334155;
+            border-color: #475569;
+        }
+        button.primary {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #0369a1;
+        }
+        button.primary:hover {
+            background: #0369a1;
+        }
+        .results-box {
+            background: #0b0f17;
+            border: 1px solid var(--surface-border);
+            border-radius: 6px;
+            padding: 14px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            min-height: 100px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid #1e293b;
+        }
+        th { color: var(--text-secondary); font-size: 11px; text-transform: uppercase; }
+        .tag-critical { color: var(--danger); font-weight: bold; }
+        .tag-warning { color: var(--warning); font-weight: bold; }
+        .tag-clean { color: var(--success); font-weight: bold; }
+        .video-container {
+            position: relative;
+            padding-bottom: 59.375%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--surface-border);
+            background: #000;
+            margin-bottom: 24px;
+        }
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .meta-links {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--surface-border);
+            font-size: 14px;
+        }
+        .meta-links a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .meta-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="badge">AWS Agents for Humans Hackathon &bull; Professional Agents Track</span>
+            <h1>Strands Sentinel</h1>
+            <p class="subtitle">Autonomous Mission-Critical Systems & AST Safety Auditor, powered by Strands Agents SDK and Model Context Protocol (MCP).</p>
+        </header>
+
+        <section class="card" style="margin-bottom: 32px;">
+            <h2>Interactive Terminal Demonstration Video <span style="font-size: 12px; color: var(--text-secondary); font-weight: normal;">Duration: ~37s &bull; Audio Narration Included</span></h2>
+            <div class="video-container">
+                <video controls preload="metadata" poster="strands_sentinel_demo.gif">
+                    <source src="strands_sentinel_demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <p style="font-size: 13px; color: var(--text-secondary);">
+                Demonstrating: (1) Sub-15ms Power of 10 AST analysis, (2) Deterministic & entropy secret scanning, (3) Standalone audit script validation (0 violations), (4) Strands InterventionHandler confirmation gating, and (5) 85/85 tests green.
+            </p>
+        </section>
+
+        <div class="grid-2">
+            <!-- Invariant Auditor -->
+            <div class="card">
+                <h2>AST Safety Invariants (Power of 10)</h2>
+                <textarea id="inv-code">def calculate_kelly_fraction(win_rate: float, win_loss_ratio: float) -> float:
+    assert 0.0 <= win_rate <= 1.0, "win_rate must be in [0.0, 1.0]"
+    assert win_loss_ratio > 0.0, "win_loss_ratio must be positive"
+    
+    edge = win_rate * (win_loss_ratio + 1.0) - 1.0
+    fraction = max(0.0, edge / win_loss_ratio)
+    
+    assert fraction >= 0.0, "fraction must be non-negative"
+    return min(fraction, 0.25)</textarea>
+                <div class="btn-row">
+                    <button onclick="loadCleanInv()">Clean Sample</button>
+                    <button onclick="loadDirtyInv()">Defective Sample</button>
+                    <button class="primary" onclick="runInvAudit()">Audit Invariants</button>
+                </div>
+                <div class="results-box" id="inv-results">Click "Audit Invariants" to inspect code.</div>
+            </div>
+
+            <!-- Secret Scanner -->
+            <div class="card">
+                <h2>Zero-Tolerance Secret Scanner</h2>
+                <textarea id="sec-code"># Deployment configurations
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+GITHUB_PAT = "ghp_1234567890abcdefghijklmnopqrstuvwxyz"
+WEB3_PRIVATE_KEY = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"</textarea>
+                <div class="btn-row">
+                    <button onclick="loadCleanSec()">Clean Config</button>
+                    <button onclick="loadDirtySec()">Leaked Keys</button>
+                    <button class="primary" onclick="runSecScan()">Scan Secrets</button>
+                </div>
+                <div class="results-box" id="sec-results">Click "Scan Secrets" to evaluate credentials.</div>
+            </div>
+        </div>
+
+        <!-- Intervention Simulation -->
+        <section class="card" style="margin-bottom: 32px;">
+            <h2>Strands Agent Intervention Simulation <span class="badge" style="margin:0;">InterventionHandler</span></h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                Demonstrating the hackathon mandate: the agent runs silently in the background and only interrupts the human when a true critical invariant violation or secret leak requires an executive decision.
+            </p>
+            <div class="btn-row">
+                <button class="primary" onclick="simIntervention('clean')">Simulate Clean Code Check</button>
+                <button class="primary" style="background: #e11d48; border-color: #be123c;" onclick="simIntervention('dirty')">Simulate Critical Violation Check</button>
+            </div>
+            <div class="results-box" id="inter-results">Click a button to simulate agent lifecycle.</div>
+        </section>
+
+        <footer>
+            <div class="meta-links">
+                <a href="https://github.com/Ishant5436/strands-sentinel" target="_blank">&rarr; GitHub Repository (Ishant5436/strands-sentinel)</a>
+                <a href="https://agentsforhumans.devpost.com/" target="_blank">&rarr; AWS Agents for Humans Hackathon (Devpost)</a>
+                <span style="color: var(--text-secondary); margin-left: auto;">License: MIT &bull; Verified 100% Green Tests</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function loadCleanInv() {
+            document.getElementById('inv-code').value = `def calculate_kelly_fraction(win_rate: float, win_loss_ratio: float) -> float:
+    assert 0.0 <= win_rate <= 1.0, "win_rate must be in [0.0, 1.0]"
+    assert win_loss_ratio > 0.0, "win_loss_ratio must be positive"
+    
+    edge = win_rate * (win_loss_ratio + 1.0) - 1.0
+    fraction = max(0.0, edge / win_loss_ratio)
+    
+    assert fraction >= 0.0, "fraction must be non-negative"
+    return min(fraction, 0.25)`;
+            runInvAudit();
+        }
+
+        function loadDirtyInv() {
+            document.getElementById('inv-code').value = `def unbounded_worker(items: list = []):
+    while True:
+        import os
+        os.system("echo running")`;
+            runInvAudit();
+        }
+
+        function runInvAudit() {
+            const code = document.getElementById('inv-code').value;
+            const lines = code.split('\n');
+            const violations = [];
+
+            lines.forEach((line, idx) => {
+                const lineNum = idx + 1;
+                if (line.includes('while True:') && !code.includes('break')) {
+                    violations.push({ rule: 'power_of_10.rule_2.bounded_loop', line: lineNum, sev: 'CRITICAL', msg: 'unbounded loop detected without static break' });
+                }
+                if (line.includes('os.system(') || line.includes('eval(')) {
+                    violations.push({ rule: 'power_of_10.banned_pattern.dynamic_execution', line: lineNum, sev: 'CRITICAL', msg: 'call to banned dynamic execution primitive' });
+                }
+                if (line.match(/def\s+\w+\s*\(.*=\s*(\[\]|\{\})/)) {
+                    violations.push({ rule: 'power_of_10.rule_3.mutable_default_argument', line: lineNum, sev: 'WARNING', msg: 'function uses mutable default argument' });
+                }
+            });
+
+            if (lines.length > 60) {
+                violations.push({ rule: 'power_of_10.rule_4.function_length', line: 1, sev: 'CRITICAL', msg: 'function exceeds 60 lines limit' });
+            }
+
+            const assertCount = (code.match(/\bassert\b/g) || []).length;
+            if (code.includes('def ') && assertCount < 2) {
+                violations.push({ rule: 'power_of_10.rule_5.assertion_density', line: 1, sev: 'CRITICAL', msg: `assertion density below minimum (found ${assertCount}, required >= 2)` });
+            }
+
+            const out = document.getElementById('inv-results');
+            if (violations.length === 0) {
+                out.innerHTML = `<span class="tag-clean">CLEAN: 0 VIOLATIONS</span><br/>Code strictly adheres to Gerard J. Holzmann's NASA Power of 10 Invariants (Length &le; 60, Asserts &ge; 2, Bounded Loops).`;
+            } else {
+                let html = `<strong>Detected ${violations.length} Invariant Violation(s):</strong><table><tr><th>Severity</th><th>Rule</th><th>Line</th><th>Detail</th></tr>`;
+                violations.forEach(v => {
+                    const tagClass = v.sev === 'CRITICAL' ? 'tag-critical' : 'tag-warning';
+                    html += `<tr><td class="${tagClass}">${v.sev}</td><td><code>${v.rule}</code></td><td>Line ${v.line}</td><td>${v.msg}</td></tr>`;
+                });
+                html += `</table>`;
+                out.innerHTML = html;
+            }
+        }
+
+        function loadCleanSec() {
+            document.getElementById('sec-code').value = `# Clean configuration\nDATABASE_URL = "postgres://user:password@localhost:5432/app"\nPORT = 8080`;
+            runSecScan();
+        }
+
+        function loadDirtySec() {
+            document.getElementById('sec-code').value = `# Deployment credentials\nAWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"\nGITHUB_PAT = "ghp_1234567890abcdefghijklmnopqrstuvwxyz"\nWEB3_PRIVATE_KEY = "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"`;
+            runSecScan();
+        }
+
+        function runSecScan() {
+            const code = document.getElementById('sec-code').value;
+            const lines = code.split('\n');
+            const findings = [];
+
+            lines.forEach((line, idx) => {
+                const lineNum = idx + 1;
+                if (line.match(/\b(AKIA|ASIA)[0-9A-Z]{16}\b/)) {
+                    findings.push({ rule: 'secret.aws_access_key_id', line: lineNum, sev: 'CRITICAL', redacted: 'AKIA****...**LE' });
+                }
+                if (line.match(/\bgh[pousr]_[A-Za-z0-9]{36}\b/)) {
+                    findings.push({ rule: 'secret.github_pat', line: lineNum, sev: 'CRITICAL', redacted: 'ghp_****...**yz' });
+                }
+                if (line.match(/\b0x[a-fA-F0-9]{64}\b/)) {
+                    findings.push({ rule: 'secret.evm_private_key', line: lineNum, sev: 'CRITICAL', redacted: '0x4f****...**1d' });
+                }
+            });
+
+            const out = document.getElementById('sec-results');
+            if (findings.length === 0) {
+                out.innerHTML = `<span class="tag-clean">CLEAN: 0 SECRETS DETECTED</span><br/>Zero exposed API keys, private keys, or credentials found.`;
+            } else {
+                let html = `<strong>Detected ${findings.length} Leaked Credential(s) (Redacted):</strong><table><tr><th>Severity</th><th>Rule</th><th>Line</th><th>Masked Key</th></tr>`;
+                findings.forEach(f => {
+                    html += `<tr><td class="tag-critical">${f.sev}</td><td><code>${f.rule}</code></td><td>Line ${f.line}</td><td><code>${f.redacted}</code></td></tr>`;
+                });
+                html += `</table>`;
+                out.innerHTML = html;
+            }
+        }
+
+        function simIntervention(type) {
+            const out = document.getElementById('inter-results');
+            if (type === 'clean') {
+                out.innerHTML = `<strong class="tag-clean">Strands Agent Execution: PASS</strong><br/>
+<strong>Lifecycle Status:</strong> <code>Proceed()</code> (Silent Background Pass)<br/>
+<strong>Interrupt Count:</strong> 0 interruptions. Agent completed surveillance loop in 11.4ms and verified clean audit state. Developer focus was NOT interrupted.`;
+            } else {
+                out.innerHTML = `<strong class="tag-critical">Strands Agent Intervention Triggered!</strong><br/>
+<strong>Decision Gate:</strong> <code>Confirm(prompt="CRITICAL invariant failure & leaked AWS key detected. Approve automated remediation patch?")</code><br/>
+<strong>Interrupt Reason:</strong> High-risk invariant violations require explicit engineer sign-off.<br/>
+<br/>
+<strong>Action:</strong> Agent paused execution and yielded control to developer with synthesized patch preview.`;
+            }
+        }
+    </script>
+</body>
+</html>

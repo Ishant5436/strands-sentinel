@@ -1,0 +1,5 @@
+Strands Sentinel is an autonomous mission-critical systems and AST safety auditor, built with the AWS Strands Agents SDK and Model Context Protocol.
+Running the check command executes our Power of 10 safety invariant engine and entropy secret scanner in under 15 milliseconds.
+The standalone audit script confirms zero blocking violations across all source code.
+Strands Sentinel uses an Intervention Handler to run silently in the background, only interrupting when an invariant violation requires human confirmation.
+The full test suite completes 85 tests with 100% pass rate.

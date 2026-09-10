@@ -12,6 +12,9 @@ confirmation before any remediation action runs. Every finding traces back
 to a real AST node, regex match, or subprocess result -- nothing is
 inferred by the model and reported as fact.
 
+- **Live Interactive Demo (Hugging Face Spaces):** [https://huggingface.co/spaces/IP11/strands-sentinel](https://huggingface.co/spaces/IP11/strands-sentinel)
+- **Demo Video Walkthrough (MP4):** [assets/strands_sentinel_demo.mp4](assets/strands_sentinel_demo.mp4) (Direct link: [https://huggingface.co/spaces/IP11/strands-sentinel/resolve/main/strands_sentinel_demo.mp4](https://huggingface.co/spaces/IP11/strands-sentinel/resolve/main/strands_sentinel_demo.mp4))
+
 ## Architecture
 
 ```mermaid

@@ -9,6 +9,8 @@
 * **Tagline:** Autonomous mission-critical systems and AST safety auditor built with the Strands Agents SDK and Model Context Protocol (MCP).
 * **Track:** Professional Agents
 * **Repository:** [https://github.com/Ishant5436/strands-sentinel](https://github.com/Ishant5436/strands-sentinel)
+* **Live Demo (Hugging Face):** [https://huggingface.co/spaces/IP11/strands-sentinel](https://huggingface.co/spaces/IP11/strands-sentinel)
+* **Video Demo URL:** [https://huggingface.co/spaces/IP11/strands-sentinel/resolve/main/strands_sentinel_demo.mp4](https://huggingface.co/spaces/IP11/strands-sentinel/resolve/main/strands_sentinel_demo.mp4)
 * **License:** MIT License
 * **Author / Developer:** Ishant Panchal (`Ishant5436` / `ishant.p@somaiya.edu`)
 
