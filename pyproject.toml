@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "strands-sentinel"
+version = "0.1.0"
+description = "Autonomous mission-critical systems and AST safety auditor built with the Strands Agents SDK and Model Context Protocol."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [{ name = "Ishant5436", email = "ishant.p@somaiya.edu" }]
+dependencies = [
+    "strands-agents>=1.55.1",
+    "strands-agents-tools>=0.8.8",
+    "mcp>=2.1.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "pydantic>=2.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov",
+    "pytest-asyncio",
+    "ruff>=0.5.0",
+    "mypy>=1.10.0",
+]
+
+[project.scripts]
+strands-sentinel = "strands_sentinel.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/strands_sentinel"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+# S (flake8-bandit) is deliberately excluded: this project's Power of 10
+# safety invariants (scripts/audit_safety_invariants.py) mandate >=2
+# `assert` statements per function in src/ as explicit invariant checks,
+# which is the opposite failure mode S101 guards against (assert used
+# for validation instead of invariant checking). Asserts here are never
+# used to validate external/untrusted input.
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["N802"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
