@@ -3,9 +3,7 @@ title: Strands Sentinel
 emoji: 🛡️
 colorFrom: indigo
 colorTo: blue
-sdk: gradio
-sdk_version: 4.44.0
-app_file: app.py
+sdk: static
 pinned: false
 license: mit
 short_description: Autonomous Systems & AST Safety Auditor (AWS Strands SDK)

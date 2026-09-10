@@ -9,3 +9,12 @@ htmlcov/
 *.egg-info/
 dist/
 build/
+
+# Rendered video output and the Remotion project's own build artifacts
+# are not tracked: large binaries do not belong in git history. Host the
+# final MP4 via the Hugging Face Space or a GitHub release instead.
+assets/*.mp4
+video/node_modules/
+video/out/
+video/audio/*.wav
+
